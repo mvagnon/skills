@@ -1,0 +1,255 @@
+---
+name: write-agent-instructions
+description: Use when writing, auditing, replacing, or rationalizing repository AGENTS.md instructions. Trigger whenever the user asks to document repo architecture, generate agent instructions, standardize a project or monorepo architecture, replace architecture skills, or analyze clean/hexagonal/layered/frontend/backend boundaries for agent guidance. This skill identifies the actual architecture first, uses Exa MCP for architecture research when needed, and writes concise AGENTS.md files with a required Mermaid TreeView diagram.
+---
+
+# Write Agent Instructions
+
+## Purpose
+
+Use this skill to create or update `AGENTS.md` files that help coding agents work correctly inside a repository.
+
+The output is not a generic architecture essay. It is repo-specific operating guidance: where code lives, how responsibilities are separated, which patterns are already established, which architecture should be standardized, and which checks an agent should run after changes.
+
+Do not refactor the repository while using this skill unless the user explicitly asks for code changes. The default deliverable is one or more `AGENTS.md` files.
+
+## Inputs
+
+The user may provide no arguments, a path, a list of repositories, a stack, or architecture preferences.
+
+When there are no arguments, run in `auto strict` mode:
+
+1. If the active Git root is a monorepo, write or update one `AGENTS.md` at the active Git root.
+2. If the active directory is not a monorepo but contains multiple child Git repositories, write or update one `AGENTS.md` per child repository.
+3. Otherwise, write or update one `AGENTS.md` in the current Git root.
+
+When arguments are provided, treat them as targets or constraints:
+
+- paths or repository names limit the analysis scope;
+- stack names help prioritize relevant files and commands;
+- architecture preferences guide standardization, but must not override clear repo facts without saying so.
+
+## Required Workflow
+
+### 1. Discover Scope
+
+Inspect before asking questions.
+
+Use `rg`, `find`, `git`, and package manifests to identify:
+
+- the current Git root;
+- nested Git roots;
+- workspace or monorepo markers such as `pnpm-workspace.yaml`, `turbo.json`, `nx.json`, root `package.json` workspaces, `lerna.json`, `rush.json`, `Cargo.toml` workspaces, `go.work`, or multi-app `apps/` plus `packages/`;
+- existing instruction files such as `AGENTS.md`, `AGENTS.override.md`, `CLAUDE.md`, `GEMINI.md`, `.cursorrules`, or repo docs;
+- README files, package scripts, CI workflows, lint/type/test/build commands;
+- app, package, service, library, domain, infrastructure, UI, API, database, and test directories.
+
+Only ask the user if multiple target scopes remain plausible after inspection.
+
+### 2. Identify Actual Architecture
+
+Read enough code to infer the architecture that is really present.
+
+Look for:
+
+- frontend framework, backend framework, language, package manager, runtime, build system, and deployment shape;
+- module boundaries, feature directories, shared packages, services, repositories, controllers/routes, hooks, API clients, schemas, DTOs, components, and tests;
+- existing validation, typing, error handling, auth, data fetching, state management, persistence, and design-system patterns;
+- import direction and boundary violations;
+- duplicate business logic or unclear shared folders.
+
+Prefer existing repo patterns over new theory. If the repo is inconsistent, choose the smallest standardization that makes the current architecture coherent.
+
+### 3. Research With Exa MCP
+
+Use Exa MCP for all non-obvious architecture standardization decisions.
+
+Use Exa when:
+
+- the repo architecture is inconsistent and needs a rational target;
+- the stack has current best practices that may have changed;
+- the user asks for maximum standardization or rationalization;
+- the generated guidance needs a defensible architecture basis.
+
+Prioritize primary or high-quality sources:
+
+- official framework documentation;
+- well-known architecture sources such as Ports and Adapters, Clean Architecture, ADR guidance, monorepo/workspace documentation, and framework maintainers;
+- official package manager, build tool, or cloud platform docs.
+
+Do not paste long research summaries into `AGENTS.md`. Convert research into short, enforceable repo rules.
+
+### 4. Choose The Standard Architecture
+
+Name the architecture in plain language. Examples:
+
+- feature-oriented React app with application hooks and infrastructure adapters;
+- Node API with thin HTTP adapters, application services, domain rules, and persistence adapters;
+- Next.js app-router application with server actions/API routes at boundaries and feature-owned UI;
+- monorepo with deployable apps in `apps/` and reusable packages in `packages/`;
+- layered service architecture where controllers call services and repositories own persistence.
+
+Do not force hexagonal architecture everywhere. Use ports and adapters only where external dependencies, business rules, and testability justify it.
+
+Standardize toward:
+
+- one owner for each business rule;
+- clear dependency direction;
+- explicit validation at boundaries;
+- reusable UI, schema, and type primitives;
+- feature or package boundaries that match the repo;
+- stable commands for lint, type checks, tests, and builds.
+
+### 5. Write Or Update AGENTS.md
+
+When an `AGENTS.md` already exists, preserve useful project-specific guidance and remove stale or duplicated architecture guidance. Do not duplicate global coding rules unless they are repo-specific or critical.
+
+Every generated `AGENTS.md` must:
+
+- be under 300 lines;
+- include a Mermaid TreeView diagram;
+- explain the architecture in detail;
+- state the scope of the file;
+- document dependency boundaries and ownership;
+- list relevant commands discovered from the repo;
+- describe validation, typing, testing, and UI/backend conventions when applicable;
+- avoid secrets, private values, generated output, or speculative instructions.
+
+Use this Mermaid TreeView format:
+
+````md
+```mermaid
+flowchart TD
+  Root["repo root"]
+  Root --> Apps["apps/ - deployable applications"]
+  Root --> Packages["packages/ - reusable packages"]
+  Apps --> Web["web - frontend app"]
+  Apps --> Api["api - backend service"]
+```
+````
+
+If Mermaid cannot represent the exact tree cleanly, keep the diagram concise and cover the remaining details in text.
+
+## AGENTS.md Template
+
+Use this structure unless the repo already has a stronger local convention:
+
+````md
+# AGENTS.md
+
+## Scope
+
+These instructions apply to ...
+
+## Architecture
+
+```mermaid
+flowchart TD
+  Root["..."]
+```
+
+Explain the architecture in concrete terms:
+
+- what is deployable;
+- where business logic belongs;
+- where framework adapters live;
+- where shared types, schemas, UI, and utilities live;
+- which dependency directions are allowed.
+
+## Working Rules
+
+- Reuse existing components, services, hooks, schemas, types, and utilities before creating new ones.
+- Keep business rules in the owning domain/service/module.
+- Validate untrusted input at boundaries.
+- Keep UI components focused on rendering and interaction.
+- Keep controllers/routes thin when backend code exists.
+- Do not add tests, logs, dependencies, or broad refactors unless requested.
+
+## Commands
+
+- Install: `...`
+- Lint: `...`
+- Type check: `...`
+- Test: `...`
+- Build: `...`
+
+## Notes
+
+Add only repo-specific caveats, generated-code warnings, or ownership rules.
+```
+````
+
+Remove unavailable commands from the template. If a command cannot be confirmed, say so briefly rather than inventing it.
+
+## Architecture Guidance
+
+### Monorepos
+
+For monorepos, document package roles instead of every folder.
+
+Recommended conventions:
+
+- `apps/` contains deployable products or services;
+- `packages/` contains reusable libraries, contracts, UI, config, or tooling;
+- apps must not import deep internals from other apps;
+- shared packages should expose stable public entry points;
+- dependencies should be installed where they are used;
+- generated code and build output should stay out of hand-written architecture rules.
+
+If the monorepo uses a different convention, describe the existing convention and rationalize it rather than renaming it in documentation.
+
+### Backend Services
+
+For backend repos, document the real boundary shape.
+
+Prefer:
+
+- routes/controllers own transport parsing and response mapping;
+- services or use cases own workflows and business rules;
+- repositories/adapters own persistence and external SDK calls;
+- schemas/DTOs validate untrusted input at boundaries;
+- auth and authorization are enforced server-side;
+- transactions wrap multi-step writes that must stay consistent.
+
+If ports and adapters fit the repo, place port interfaces with the code that owns the business need and adapters at the framework or infrastructure edge.
+
+### Frontend Apps
+
+For frontend repos, document component and data boundaries.
+
+Prefer:
+
+- pages/routes compose features and providers;
+- presentation components render UI and manage local interaction state;
+- hooks own async state, cache orchestration, and feature workflows;
+- API clients or repositories own raw network calls;
+- schemas/DTO mappers validate external data before it becomes app state;
+- design-system primitives are reused before local styling.
+
+Do not tell agents to create new UI primitives when the repo already has usable primitives.
+
+### Full-Stack Apps
+
+For full-stack repos, document where the client/server boundary is enforced.
+
+Include:
+
+- server-only modules and client-only modules;
+- shared contracts, schemas, and types;
+- where authentication and authorization are checked;
+- where database and external provider calls are allowed;
+- how data moves from request to validation to business logic to response/UI.
+
+## Quality Bar
+
+Before finishing:
+
+- review the diff and confirm the chosen `AGENTS.md` scope is correct;
+- confirm the Mermaid diagram renders as valid Mermaid syntax;
+- confirm the file is under 300 lines;
+- confirm commands are real or clearly marked as unavailable;
+- confirm old or contradictory architecture instructions were removed;
+- run relevant lightweight checks if the repo has them and they do not rewrite files;
+- summarize which files were written and which assumptions were made.
+
+Do not create test files or eval workspaces by default for this skill. If the user explicitly asks to evaluate the skill, then follow the normal skill evaluation workflow.

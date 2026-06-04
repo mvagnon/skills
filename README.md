@@ -15,9 +15,7 @@ directory containing a `SKILL.md` file with:
 
 ```txt
 skills/
-  hexagonal-node/
-    SKILL.md
-  hexagonal-react/
+  write-agent-instructions/
     SKILL.md
   implement-design-system/
     SKILL.md
@@ -29,8 +27,7 @@ skills/
 
 | Skill | Main use |
 | --- | --- |
-| `hexagonal-node` | Design, audit, or implement layered Node.js backend architecture with ports and adapters. |
-| `hexagonal-react` | Design, audit, or implement React frontend architecture with domain logic, ports, adapters, and hooks. |
+| `write-agent-instructions` | Generate or update repo-specific `AGENTS.md` files by identifying and rationalizing the active architecture. |
 | `implement-design-system` | Apply a Figma or existing design system to an application or monorepo. |
 | `write-tests` | Write or repair tests focused on user journeys and business workflows. |
 
