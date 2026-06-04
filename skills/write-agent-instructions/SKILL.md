@@ -1,6 +1,6 @@
 ---
 name: write-agent-instructions
-description: Use when writing, auditing, replacing, or rationalizing repository AGENTS.md instructions. Trigger whenever the user asks to document repo architecture, generate agent instructions, standardize a project or monorepo architecture, replace architecture skills, or analyze clean/hexagonal/layered/frontend/backend boundaries for agent guidance. This skill identifies the actual architecture first, uses Exa MCP for architecture research when needed, and writes concise AGENTS.md files with a required Mermaid TreeView diagram.
+description: Use when writing, auditing, replacing, or rationalizing repository AGENTS.md instructions. Trigger whenever the user asks to document repo architecture, generate agent instructions, standardize a project or monorepo architecture, replace architecture skills, or analyze clean/hexagonal/layered/frontend/backend boundaries for agent guidance. This skill identifies the actual architecture first, always uses Exa MCP to research the target architecture and stack, rationalizes inconsistent repos toward a defensible architecture, and writes concise AGENTS.md files with a required Mermaid TreeView diagram.
 ---
 
 # Write Agent Instructions
@@ -15,7 +15,11 @@ Do not refactor the repository while using this skill unless the user explicitly
 
 ## Inputs
 
-The user may provide no arguments, a path, a list of repositories, a stack, or architecture preferences.
+Optional invocation arguments:
+
+$ARGUMENTS
+
+The user may provide no arguments, a path, a list of repositories, a stack, architecture preferences, or additional architecture facts. Treat arguments as constraints and context, not as proof. Verify them against the repository and Exa research before they become instructions.
 
 When there are no arguments, run in `auto strict` mode:
 
@@ -27,7 +31,8 @@ When arguments are provided, treat them as targets or constraints:
 
 - paths or repository names limit the analysis scope;
 - stack names help prioritize relevant files and commands;
-- architecture preferences guide standardization, but must not override clear repo facts without saying so.
+- architecture preferences guide standardization, but must not override clear repo facts without saying so;
+- extra user facts can explain intent or legacy constraints, but still need repository and research validation.
 
 ## Required Workflow
 
@@ -58,18 +63,25 @@ Look for:
 - import direction and boundary violations;
 - duplicate business logic or unclear shared folders.
 
-Prefer existing repo patterns over new theory. If the repo is inconsistent, choose the smallest standardization that makes the current architecture coherent.
+Do not blindly preserve existing repo patterns. The goal is to rationalize the architecture, not just describe whatever exists.
+
+Use this balance:
+
+- about 66% alignment with the architecture pattern as it is normally understood from research, such as clean architecture, hexagonal architecture, layered architecture, vertical slice architecture, or a framework-native architecture;
+- about 33% freedom for existing project conventions, pragmatic constraints, legacy structure, and local naming that already works.
+
+This ratio is a judgment aid, not a math exercise. It means the generated instructions should make a messy repository more coherent without pretending it can or should become a textbook implementation overnight.
 
 ### 3. Research With Exa MCP
 
-Use Exa MCP for all non-obvious architecture standardization decisions.
+Always use Exa MCP before choosing or documenting the target architecture, even when repository inspection already seems sufficient.
 
-Use Exa when:
+Run at least two Exa searches:
 
-- the repo architecture is inconsistent and needs a rational target;
-- the stack has current best practices that may have changed;
-- the user asks for maximum standardization or rationalization;
-- the generated guidance needs a defensible architecture basis.
+- one search for the detected or requested architecture pattern, such as hexagonal architecture, clean architecture, ports and adapters, layered architecture, vertical slice architecture, monorepo architecture, or frontend feature architecture;
+- one search for the actual stack or framework architecture conventions, such as Next.js, React, NestJS, Hono, Django, Rails, Spring, Go services, Turborepo, pnpm workspaces, or the detected build/runtime ecosystem.
+
+If the repository is inconsistent, weirdly organized, or poorly follows its claimed architecture, run one additional Exa search for migration or rationalization guidance for that architecture and stack.
 
 Prioritize primary or high-quality sources:
 
@@ -89,7 +101,13 @@ Name the architecture in plain language. Examples:
 - monorepo with deployable apps in `apps/` and reusable packages in `packages/`;
 - layered service architecture where controllers call services and repositories own persistence.
 
-Do not force hexagonal architecture everywhere. Use ports and adapters only where external dependencies, business rules, and testability justify it.
+Do not force hexagonal architecture everywhere. Use the Exa research and repository facts to choose the closest defensible target. Use ports and adapters only where external dependencies, business rules, and testability justify it.
+
+When the repository claims one architecture but implements another, say so in the analysis and standardize toward the closest rational target. Examples:
+
+- a "clean architecture" repo with controllers calling persistence directly should be documented as a layered service architecture unless the existing code can realistically support use cases and adapters;
+- a "hexagonal" repo with no meaningful domain rules or ports should be documented as framework-native modules with infrastructure boundaries;
+- a frontend app with many shared folders but feature-owned workflows should be documented as feature-oriented, not as a generic component library architecture.
 
 Standardize toward:
 
@@ -176,6 +194,9 @@ Explain the architecture in concrete terms:
 ## Notes
 
 Add only repo-specific caveats, generated-code warnings, or ownership rules.
+
+```
+
 ```
 ````
 
