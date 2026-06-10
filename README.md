@@ -15,7 +15,7 @@ directory containing a `SKILL.md` file with:
 
 ```txt
 skills/
-  frontend-design/
+  frontend-dev/
     SKILL.md
   write-agent-instructions/
     SKILL.md
@@ -29,7 +29,7 @@ skills/
 
 | Skill | Main use |
 | --- | --- |
-| `frontend-design` | Build, refactor, or review frontend API consumption, component structure, loading states, and UI error handling. |
+| `frontend-dev` | Build, refactor, or review frontend API consumption, design-system reuse, component structure, loading states, and UI error handling. |
 | `write-agent-instructions` | Generate or update repo-specific `AGENTS.md` files by identifying and rationalizing the active architecture. |
 | `implement-design-system` | Apply a Figma or existing design system to an application or monorepo. |
 | `write-tests` | Write or repair tests focused on user journeys and business workflows. |

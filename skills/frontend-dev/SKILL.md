@@ -1,9 +1,9 @@
 ---
-name: frontend-design
-description: Use when building, refactoring, or reviewing frontend code that consumes APIs, defines custom data hooks, splits UI components, handles loading states, or handles UI errors. This skill guides Codex to follow the existing frontend data-fetching architecture, reuse existing design-system primitives, avoid duplicate components, and implement appropriate spinners, skeletons, and error states.
+name: frontend-dev
+description: Use when building, refactoring, or reviewing frontend code that consumes APIs, defines custom data hooks, splits UI components, handles loading states, or handles UI errors. This skill guides you to follow the existing frontend data-fetching architecture, reuse existing design-system primitives, avoid duplicate components, and implement appropriate spinners, skeletons, and error states.
 ---
 
-# Frontend Design
+# Frontend Dev
 
 ## API Consumption
 
@@ -22,8 +22,6 @@ When the project uses `TanStack Query` (recommended):
 If the project uses another data layer, follow that project's existing pattern instead.
 
 ## Components
-
-### Core Rules
 
 - Keep each meaningful component in its own file.
 - Do not define multiple substantial subcomponents inside one large component file.
