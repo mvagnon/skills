@@ -19,17 +19,19 @@ Optional invocation arguments:
 
 $ARGUMENTS
 
-The user may provide no arguments, a path, a list of repositories, a stack, architecture preferences, or additional architecture facts. Treat arguments as constraints and context, not as proof. Verify them against the repository and Exa research before they become instructions.
+The user may provide no arguments, a path inside the active repository, a stack, architecture preferences, or additional architecture facts. Treat arguments as constraints and context, not as proof. Verify them against the repository and Exa research before they become instructions.
+
+Assume the agent is invoked from inside the intended repository. Do not search for sibling or child repositories as separate targets.
 
 When there are no arguments, run in `auto strict` mode:
 
-1. If the active Git root is a monorepo, write or update one `AGENTS.md` at the active Git root.
-2. If the active directory is not a monorepo but contains multiple child Git repositories, write or update one `AGENTS.md` per child repository.
-3. Otherwise, write or update one `AGENTS.md` in the current Git root.
+1. Resolve the active Git root as the target repository.
+2. If the target repository is a monorepo, work from the monorepo root and account for every service, app, package, and shared boundary in that monorepo.
+3. Otherwise, work on the classic repository as a single target.
 
 When arguments are provided, treat them as targets or constraints:
 
-- paths or repository names limit the analysis scope;
+- paths inside the active repository identify areas of interest, but a monorepo remains a whole-repository scope unless the user explicitly asks for an additional scoped instruction file;
 - stack names help prioritize relevant files and commands;
 - architecture preferences guide standardization, but must not override clear repo facts without saying so;
 - extra user facts can explain intent or legacy constraints, but still need repository and research validation.
@@ -42,14 +44,14 @@ Inspect before asking questions.
 
 Use `rg`, `find`, `git`, and package manifests to identify:
 
-- the current Git root;
-- nested Git roots;
+- the current Git root, which is the target repository;
+- whether the target repository is a monorepo or a classic repository;
 - workspace or monorepo markers such as `pnpm-workspace.yaml`, `turbo.json`, `nx.json`, root `package.json` workspaces, `lerna.json`, `rush.json`, `Cargo.toml` workspaces, `go.work`, or multi-app `apps/` plus `packages/`;
 - existing instruction files such as `AGENTS.md`, `AGENTS.override.md`, `CLAUDE.md`, `GEMINI.md`, `.cursorrules`, or repo docs;
 - README files, package scripts, CI workflows, lint/type/test/build commands;
 - app, package, service, library, domain, infrastructure, UI, API, database, and test directories.
 
-Only ask the user if multiple target scopes remain plausible after inspection.
+Only ask the user if the monorepo/classic-repo classification remains ambiguous after inspection.
 
 ### 2. Identify Actual Architecture
 
@@ -127,7 +129,7 @@ Every generated `AGENTS.md` must:
 - be under 300 lines;
 - include a Mermaid TreeView diagram;
 - explain the architecture in detail;
-- state the scope of the file;
+- state the scope of the file, covering the full monorepo when the repository is a monorepo;
 - document dependency boundaries and ownership;
 - list relevant commands discovered from the repo;
 - describe validation, typing, testing, and UI/backend conventions when applicable;
@@ -206,7 +208,7 @@ Remove unavailable commands from the template. If a command cannot be confirmed,
 
 ### Monorepos
 
-For monorepos, document package roles instead of every folder.
+For monorepos, work from the monorepo root and document every service, app, package role, and shared boundary instead of every folder. Do not split the task into child repositories.
 
 Recommended conventions:
 
