@@ -17,25 +17,19 @@ directory containing a `SKILL.md` file with:
 skills/
   frontend-dev/
     SKILL.md
-  write-agent-instructions/
-    SKILL.md
   implement-design-system/
     SKILL.md
   write-tests/
-    SKILL.md
-  write-readme/
     SKILL.md
 ```
 
 ## Available Skills
 
-| Skill | Main use |
-| --- | --- |
-| `frontend-dev` | Build, refactor, or review frontend API consumption, design-system reuse, component structure, loading states, and UI error handling. |
-| `write-agent-instructions` | Generate or update repo-specific `AGENTS.md` files by identifying and rationalizing the active architecture. |
-| `implement-design-system` | Apply a Figma or existing design system to an application or monorepo. |
-| `write-tests` | Write or repair tests focused on user journeys and business workflows. |
-| `write-readme` | Create or update a Git repository root `README.md` with a required table of contents, setup commands, environment variables, and project conventions. |
+| Skill                     | Main use                                                                                                                              |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `frontend-dev`            | Build, refactor, or review frontend API consumption, design-system reuse, component structure, loading states, and UI error handling. |
+| `implement-design-system` | Apply a Figma or existing design system to an application or monorepo.                                                                |
+| `write-tests`             | Write or repair tests focused on user journeys and business workflows.                                                                |
 
 ## Add Or Update A Skill
 
